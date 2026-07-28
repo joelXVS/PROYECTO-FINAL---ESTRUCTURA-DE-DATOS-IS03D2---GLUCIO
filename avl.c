@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "include/avl.h"
+#include "avl.h"
 
 // Crea un nodo para el árbol AVL con los datos del viaje
 NodoAVL* crear_nodo_avl(int codigo, int capacidad) {
