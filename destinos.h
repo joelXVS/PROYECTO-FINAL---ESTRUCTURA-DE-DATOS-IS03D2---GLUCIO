@@ -8,5 +8,6 @@ void agregar_destino(Destino** raiz, Destino* nuevo);
 void mostrar_destinos(Destino* raiz);
 void liberar_destinos(Destino* raiz);
 int pasajero_existe_global(Destino* raiz, int num_doc);
+void modificar_destino(Destino* destino, char* nuevo_nombre, char* nueva_empresa);
 
 #endif
