@@ -5,7 +5,7 @@
 #include "pasajeros.h"
 #include "avl.h"
 
-// Funciones auxiliares de estadísticas y embarque integradas para simplificar
+// estadística y embarque
 void realizar_embarque(Destino* raiz_destinos) {
     int cod_dest, cod_viaje;
     printf("Ingrese codigo del destino: "); scanf("%d", &cod_dest);
@@ -24,8 +24,8 @@ void realizar_embarque(Destino* raiz_destinos) {
     p->estado = EMBARCADO;
     viaje->pasajeros_abordados++;
     printf("Pasajero %d embarcado en viaje %d.\n", p->num_documento, cod_viaje);
-    // Nota: En un sistema real, el pasajero embarcado se guardaría en una lista histórica. 
-    // Aquí lo liberamos tras "embarcar" para simplificar, o podrías guardarlo en el nodo AVL.
+    
+    // Sacamos al pasajero embarcado del avl
     free(p); 
 }
 
@@ -55,9 +55,7 @@ void mostrar_estadisticas(Destino* raiz) {
         total_dest++;
         if (espera > max_espera) max_espera = espera;
         if (espera < min_espera) min_espera = espera;
-        
-        // Recorrer AVL para viajes (usando un array o recursividad, aquí simplificado con un recorrido)
-        // Para no extender el código, asumimos que calculamos esto en un recorrido auxiliar.
+
         aux = aux->siguiente;
     }
     printf("\n--- ESTADISTICAS ---\n");
@@ -148,7 +146,7 @@ int main() {
         }
     } while (opcion != 0);
 
-    liberar_destinos(raiz_destinos); // Liberación obligatoria de memoria
+    liberar_destinos(raiz_destinos);
     return 0;
 }
 
