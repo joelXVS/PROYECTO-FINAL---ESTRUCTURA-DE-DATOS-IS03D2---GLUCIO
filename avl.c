@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "avl.h"
+#include "include/avl.h"
 
 NodoAVL* crear_nodo_avl(int codigo, int capacidad) {
     NodoAVL* nuevo = (NodoAVL*)malloc(sizeof(NodoAVL));
