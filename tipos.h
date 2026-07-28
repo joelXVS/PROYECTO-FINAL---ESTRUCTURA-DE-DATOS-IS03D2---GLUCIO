@@ -5,12 +5,12 @@
 #define TRUE 1
 #define FALSE 0
 
-// Tipos de documento
+// Tipos de documento permitidos
 enum TipoDoc { CEDULA = 1, PASAPORTE, TARJETA_ID };
-// Estado pasajero
+// Estados del pasajero
 enum Estado { EN_ESPERA = 0, EMBARCADO };
 
-// Estructura Pasajero (Nodo FIFO)
+// Estructura del pasajero (nodo de la cola FIFO)
 typedef struct Pasajero {
     int num_documento;
     int tipo_documento;
@@ -18,14 +18,14 @@ typedef struct Pasajero {
     struct Pasajero* siguiente;
 } Pasajero;
 
-// Estructura Cola FIFO
+// Cola FIFO para los pasajeros en espera
 typedef struct ColaPasajeros {
     Pasajero* frente;
     Pasajero* fin;
     int cantidad;
 } ColaPasajeros;
 
-// Estructura Nodo AVL (Viajes)
+// Nodo del árbol AVL (viajes programados)
 typedef struct NodoAVL {
     int codigo_viaje;
     int capacidad_maxima;
@@ -35,7 +35,7 @@ typedef struct NodoAVL {
     struct NodoAVL* derecha;
 } NodoAVL;
 
-// Estructura Destino (Nodo Lista Enlazada)
+// Destino (nodo de la lista enlazada de destinos)
 typedef struct Destino {
     int codigo;
     char nombre[MAX_NOMBRE];

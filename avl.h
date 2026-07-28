@@ -12,5 +12,6 @@ NodoAVL* insertar_avl(NodoAVL* nodo, int codigo, int capacidad);
 NodoAVL* buscar_avl(NodoAVL* raiz, int codigo);
 void mostrar_avl(NodoAVL* raiz, int nivel);
 void liberar_avl(NodoAVL* raiz);
+void estadisticas_avl(NodoAVL* raiz, int* total_viajes, int* total_pas_abordados);
 
 #endif
