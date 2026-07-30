@@ -7,13 +7,13 @@
 
 // Tipos de documento permitidos
 enum TipoDoc { CEDULA = 1, PASAPORTE, TARJETA_ID };
-// Estados del pasajero
 enum Estado { EN_ESPERA = 0, EMBARCADO };
 
 // Estructura del pasajero (nodo de la cola FIFO)
 typedef struct Pasajero {
     int num_documento;
     int tipo_documento;
+    char genero;          // M = Masculino, F = Femenino
     int estado;
     struct Pasajero* siguiente;
 } Pasajero;
@@ -25,7 +25,7 @@ typedef struct ColaPasajeros {
     int cantidad;
 } ColaPasajeros;
 
-// Nodo del árbol AVL (viajes programados)
+// Nodo del arbol AVL (viajes programados)
 typedef struct NodoAVL {
     int codigo_viaje;
     int capacidad_maxima;

@@ -100,9 +100,12 @@ void consultar_pasajero_global(Destino* raiz) {
     while (aux) {
         Pasajero* p = buscar_pasajero_en_cola(aux->cola, doc);
         if (p) {
-            printf("El pasajero esta en el destino '%s' con estado: %s\n",
-                   aux->nombre,
-                   p->estado == EN_ESPERA ? "En espera" : "Embarcado");
+      printf("Pasajero encontrado\n");
+printf("Destino : %s\n", aux->nombre);
+printf("Documento : %d\n", p->num_documento);
+printf("Genero : %s\n", p->genero == 'M' ? "Masculino" : "Femenino");
+printf("Estado : %s\n",
+       p->estado == EN_ESPERA ? "En espera" : "Embarcado");
             return;
         }
         aux = aux->siguiente;
@@ -120,6 +123,8 @@ void mostrar_estadisticas(Destino* raiz) {
     int min_espera = 99999;
     int total_viajes = 0;
     int total_pas_abordados = 0;
+    int hombres = 0;
+    int mujeres = 0;
 
     if (!raiz) {
         printf("\n--- Estadisticas ---\n");
@@ -162,6 +167,8 @@ void mostrar_estadisticas(Destino* raiz) {
     printf("4. Menor cantidad de pasajeros en espera en un destino: %d\n", min_espera);
     printf("5. Total de pasajeros registrados en el sistema     : %d\n", total_pas_registrados);
     printf("6. Total de pasajeros ya embarcados                 : %d\n", total_pas_abordados);
+    printf("Total hombres : %d\n", hombres);
+    printf("Total mujeres : %d\n", mujeres);
     printf("========================================\n");
 }
 
@@ -207,33 +214,51 @@ int main() {
                 break;
             }
 
-            case 2: {
-                int cod_d = leer_entero("Codigo del destino: ");
+           case 2: {
+    int cod_d = leer_entero("Codigo del destino: ");
 
-                Destino* d = buscar_destino(raiz_destinos, cod_d);
-                if (!d) {
-                    printf("Ese destino no existe.\n");
-                    break;
-                }
+    Destino* d = buscar_destino(raiz_destinos, cod_d);
 
-                int doc = leer_entero("Numero de documento: ");
+    if (!d) {
+        printf("Ese destino no existe.\n");
+        break;
+    }
 
-                if (pasajero_existe_global(raiz_destinos, doc)) {
-                    printf("Ese pasajero ya esta registrado en el sistema.\n");
-                    break;
-                }
+    int doc = leer_entero("Numero de documento: ");
 
-                int tipo = leer_entero("Tipo de documento (1: Cédula, 2: Pasaporte, 3: Tarjeta de Identidad): ");
+    if (pasajero_existe_global(raiz_destinos, doc)) {
+        printf("Ese pasajero ya esta registrado en el sistema.\n");
+        break;
+    }
 
-                if (tipo < 1 || tipo > 3) {
-                    printf("Tipo de documento no valido.\n");
-                    break;
-                }
+    int tipo = leer_entero("Tipo de documento (1: Cedula, 2: Pasaporte, 3: Tarjeta de Identidad): ");
 
-                registrar_pasajero(d->cola, doc, tipo);
-                printf("Pasajero registrado en la cola del destino '%s'.\n", d->nombre);
-                break;
-            }
+    if (tipo < 1 || tipo > 3) {
+        printf("Tipo de documento no valido.\n");
+        break;
+    }
+
+    char genero;
+
+    do {
+        printf("Genero (M/F): ");
+        scanf(" %c", &genero);
+        getchar();
+
+        if (genero >= 'a' && genero <= 'z')
+            genero -= 32;
+
+        if (genero != 'M' && genero != 'F')
+            printf("Genero no valido. Ingrese M o F.\n");
+
+    } while (genero != 'M' && genero != 'F');
+
+    registrar_pasajero(d->cola, doc, tipo, genero);
+
+    printf("Pasajero registrado correctamente en '%s'.\n", d->nombre);
+
+    break;
+}
 
             case 3: {
                 int cod = leer_entero("Codigo del destino: ");

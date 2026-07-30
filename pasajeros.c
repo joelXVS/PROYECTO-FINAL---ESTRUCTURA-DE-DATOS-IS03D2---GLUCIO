@@ -17,10 +17,12 @@ int cola_vacia(ColaPasajeros* cola) {
 }
 
 // Agrega un pasajero al final de la cola
-void registrar_pasajero(ColaPasajeros* cola, int num_doc, int tipo_doc) {
+void registrar_pasajero(ColaPasajeros* cola, int num_doc, int tipo_doc, char genero) {
     Pasajero* nuevo = (Pasajero*)malloc(sizeof(Pasajero));
+
     nuevo->num_documento = num_doc;
     nuevo->tipo_documento = tipo_doc;
+    nuevo->genero = genero;
     nuevo->estado = EN_ESPERA;
     nuevo->siguiente = NULL;
 
@@ -31,6 +33,7 @@ void registrar_pasajero(ColaPasajeros* cola, int num_doc, int tipo_doc) {
         cola->fin->siguiente = nuevo;
         cola->fin = nuevo;
     }
+
     cola->cantidad++;
 }
 
@@ -38,6 +41,7 @@ void registrar_pasajero(ColaPasajeros* cola, int num_doc, int tipo_doc) {
 Pasajero* consultar_primero(ColaPasajeros* cola) {
     if (cola_vacia(cola))
         return NULL;
+
     return cola->frente;
 }
 
@@ -48,26 +52,48 @@ Pasajero* desembarcar_pasajero(ColaPasajeros* cola) {
 
     Pasajero* aux = cola->frente;
     cola->frente = aux->siguiente;
+
     if (cola->frente == NULL)
         cola->fin = NULL;
+
     cola->cantidad--;
     aux->siguiente = NULL;
+
     return aux;
 }
 
-// Imprime todos los pasajeros de la cola
+// Muestra todos los pasajeros registrados
 void mostrar_pasajeros_cola(ColaPasajeros* cola) {
+
     Pasajero* aux = cola->frente;
-    if (!aux) {
-        printf("  No hay pasajeros en espera para este destino.\n");
+    int hombres = 0;
+    int mujeres = 0;
+
+    if (aux == NULL) {
+        printf("No hay pasajeros en espera para este destino.\n");
         return;
     }
-    while (aux) {
-        printf("  Documento: %d | Tipo: %d | Estado: %s\n",
-               aux->num_documento, aux->tipo_documento,
+
+    while (aux != NULL) {
+
+        printf("Documento: %d | Tipo: %d | Genero: %s | Estado: %s\n",
+               aux->num_documento,
+               aux->tipo_documento,
+               aux->genero == 'M' ? "Masculino" : "Femenino",
                aux->estado == EN_ESPERA ? "En espera" : "Embarcado");
+
+        if (aux->genero == 'M')
+            hombres++;
+        else
+            mujeres++;
+
         aux = aux->siguiente;
     }
+
+    printf("\nResumen de pasajeros\n");
+    printf("Hombres : %d\n", hombres);
+    printf("Mujeres : %d\n", mujeres);
+    printf("Total   : %d\n", hombres + mujeres);
 }
 
 // Retorna la cantidad de pasajeros en espera
@@ -75,24 +101,32 @@ int contar_pasajeros_espera(ColaPasajeros* cola) {
     return cola->cantidad;
 }
 
-// Busca un pasajero por número de documento dentro de la cola
+// Busca un pasajero por documento
 Pasajero* buscar_pasajero_en_cola(ColaPasajeros* cola, int num_doc) {
+
     Pasajero* aux = cola->frente;
-    while (aux) {
+
+    while (aux != NULL) {
+
         if (aux->num_documento == num_doc)
             return aux;
+
         aux = aux->siguiente;
     }
+
     return NULL;
 }
 
-// Libera toda la memoria usada por la cola
+// Libera toda la memoria de la cola
 void liberar_cola(ColaPasajeros* cola) {
+
     Pasajero* aux;
-    while (cola->frente) {
+
+    while (cola->frente != NULL) {
         aux = cola->frente;
         cola->frente = aux->siguiente;
         free(aux);
     }
+
     free(cola);
 }
