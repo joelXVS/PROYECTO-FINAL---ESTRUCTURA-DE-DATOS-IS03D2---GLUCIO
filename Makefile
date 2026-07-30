@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude
-SRC = src/main.c src/destinos.c src/pasajeros.c src/avl.c src/estadisticas.c
+CFLAGS = -Wall -Wextra -std=c11
+SRC = main.c destinos.c pasajeros.c avl.c
 OBJ = $(SRC:.c=.o)
 EXEC = terminal_portuario
 
@@ -13,4 +13,6 @@ $(EXEC): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f src/*.o $(EXEC)
+	rm -f *.o $(EXEC)
+
+.PHONY: all clean

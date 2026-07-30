@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "pasajeros.h"
 
-// Crea una cola vacía
+// Crea una cola vacia
 ColaPasajeros* crear_cola() {
     ColaPasajeros* nueva = (ColaPasajeros*)malloc(sizeof(ColaPasajeros));
     nueva->frente = NULL;
@@ -11,7 +11,7 @@ ColaPasajeros* crear_cola() {
     return nueva;
 }
 
-// Verifica si la cola está vacía
+// Verifica si la cola esta vacia
 int cola_vacia(ColaPasajeros* cola) {
     return cola->frente == NULL;
 }

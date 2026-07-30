@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "include/avl.h"
+#include "avl.h"
 
-// Crea un nodo para el árbol AVL con los datos del viaje
+// este crea un nodo para el arbol AVL con los datos del viaje
 NodoAVL* crear_nodo_avl(int codigo, int capacidad) {
     NodoAVL* nuevo = (NodoAVL*)malloc(sizeof(NodoAVL));
     nuevo->codigo_viaje = codigo;
@@ -10,16 +10,17 @@ NodoAVL* crear_nodo_avl(int codigo, int capacidad) {
     nuevo->pasajeros_abordados = 0;
     nuevo->altura = 1;
     nuevo->izquierda = NULL;
+
     nuevo->derecha = NULL;
     return nuevo;
 }
 
-// Devuelve la altura de un nodo (0 si es NULL)
+// le devuelve la altura de un nodo (le da un 0 si es NULL)
 int obtener_altura(NodoAVL* n) {
     return n ? n->altura : 0;
 }
 
-// Máximo de dos enteros
+// este es el Maximo de dos enteros
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
@@ -29,7 +30,7 @@ int obtener_balance(NodoAVL* n) {
     return n ? obtener_altura(n->izquierda) - obtener_altura(n->derecha) : 0;
 }
 
-// Rotación simple a la derecha
+// Rotacion simple a la derecha
 NodoAVL* rotar_derecha(NodoAVL* y) {
     NodoAVL* x = y->izquierda;
     NodoAVL* T2 = x->derecha;
@@ -41,10 +42,10 @@ NodoAVL* rotar_derecha(NodoAVL* y) {
     y->altura = max(obtener_altura(y->izquierda), obtener_altura(y->derecha)) + 1;
     x->altura = max(obtener_altura(x->izquierda), obtener_altura(x->derecha)) + 1;
 
-    return x; // nueva raíz
+    return x; // nueva raiz
 }
 
-// Rotación simple a la izquierda
+// Rotacion simple a la izquierda
 NodoAVL* rotar_izquierda(NodoAVL* x) {
     NodoAVL* y = x->derecha;
     NodoAVL* T2 = y->izquierda;
@@ -60,17 +61,17 @@ NodoAVL* rotar_izquierda(NodoAVL* x) {
 
 // Inserta un nuevo viaje en el AVL y lo balancea
 NodoAVL* insertar_avl(NodoAVL* nodo, int codigo, int capacidad) {
-    // Caso base: árbol vacío
+    // Caso base: arbol vacio
     if (nodo == NULL)
         return crear_nodo_avl(codigo, capacidad);
 
-    // Buscar la posición correcta (clave = código de viaje)
+    // Buscar la posicion correcta (clave = codigo de viaje)
     if (codigo < nodo->codigo_viaje)
         nodo->izquierda = insertar_avl(nodo->izquierda, codigo, capacidad);
     else if (codigo > nodo->codigo_viaje)
         nodo->derecha = insertar_avl(nodo->derecha, codigo, capacidad);
     else
-        return nodo; // Código duplicado, no se inserta
+        return nodo; // Codigo duplicado, no se inserta
 
     // Actualizar altura del nodo actual
     nodo->altura = 1 + max(obtener_altura(nodo->izquierda), obtener_altura(nodo->derecha));
@@ -101,7 +102,7 @@ NodoAVL* insertar_avl(NodoAVL* nodo, int codigo, int capacidad) {
     return nodo;
 }
 
-// Busca un viaje por su código en el AVL
+// Busca un viaje por su codigo en el AVL
 NodoAVL* buscar_avl(NodoAVL* raiz, int codigo) {
     if (raiz == NULL || raiz->codigo_viaje == codigo)
         return raiz;
@@ -110,7 +111,7 @@ NodoAVL* buscar_avl(NodoAVL* raiz, int codigo) {
     return buscar_avl(raiz->derecha, codigo);
 }
 
-// Muestra el árbol de forma horizontal (raíz a la derecha)
+// Muestra el arbol de forma horizontal (raiz a la derecha)
 void mostrar_avl(NodoAVL* raiz, int nivel) {
     if (raiz == NULL)
         return;
@@ -121,7 +122,7 @@ void mostrar_avl(NodoAVL* raiz, int nivel) {
     mostrar_avl(raiz->izquierda, nivel + 1);
 }
 
-// Libera recursivamente toda la memoria del árbol
+// Libera recursivamente toda la memoria del arbol
 void liberar_avl(NodoAVL* raiz) {
     if (raiz == NULL)
         return;

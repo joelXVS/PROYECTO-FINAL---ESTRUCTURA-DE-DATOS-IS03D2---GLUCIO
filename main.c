@@ -7,16 +7,55 @@
 #include "avl.h"
 
 // -------------------------------------------------------------
-//  Función para embarcar al primer pasajero de la cola
+//  Entrada de datos segura
+// -------------------------------------------------------------
+
+// Lee un entero desde teclado. Si el usuario escribe algo que no es
+// un numero, vuelve a pedirlo en vez de dejar el programa en un
+// ciclo infinito (lo que pasaba antes con scanf("%d", ...) sin
+// validar su valor de retorno).
+int leer_entero(const char* mensaje) {
+    char linea[100];
+    int valor;
+
+    while (1) {
+        printf("%s", mensaje);
+        if (fgets(linea, sizeof(linea), stdin) == NULL)
+            continue;
+        if (sscanf(linea, "%d", &valor) == 1)
+            return valor;
+        printf("Entrada invalida, debe ser un numero. Intente de nuevo.\n");
+    }
+}
+
+// Lee una linea de texto de forma segura y le quita el salto de linea.
+// Si el usuario solo presiona Enter, buffer queda como cadena vacia
+// (""), en vez de contener basura sin inicializar como pasaba antes
+// con scanf(" %[^\n]", ...) cuando la entrada estaba vacia.
+void leer_linea(char* buffer, int tam) {
+    if (fgets(buffer, tam, stdin) == NULL) {
+        buffer[0] = '\0';
+        return;
+    }
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else {
+        // La linea escrita era mas larga que el buffer: descartar el resto
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+}
+
+// -------------------------------------------------------------
+//  Funcion para embarcar al primer pasajero de la cola
 // -------------------------------------------------------------
 void realizar_embarque(Destino* raiz_destinos) {
-    int cod_dest, cod_viaje;
-    printf("Ingrese el código del destino: ");
-    scanf("%d", &cod_dest);
+    int cod_dest = leer_entero("Ingrese el codigo del destino: ");
 
     Destino* d = buscar_destino(raiz_destinos, cod_dest);
     if (!d) {
-        printf("No se encontró ese destino.\n");
+        printf("No se encontro ese destino.\n");
         return;
     }
 
@@ -25,17 +64,16 @@ void realizar_embarque(Destino* raiz_destinos) {
         return;
     }
 
-    printf("Ingrese el código del viaje: ");
-    scanf("%d", &cod_viaje);
+    int cod_viaje = leer_entero("Ingrese el codigo del viaje: ");
 
     NodoAVL* viaje = buscar_avl(d->raiz_viajes, cod_viaje);
     if (!viaje) {
-        printf("Ese viaje no está registrado.\n");
+        printf("Ese viaje no esta registrado.\n");
         return;
     }
 
     if (viaje->pasajeros_abordados >= viaje->capacidad_maxima) {
-        printf("El viaje ya está lleno.\n");
+        printf("El viaje ya esta lleno.\n");
         return;
     }
 
@@ -47,8 +85,8 @@ void realizar_embarque(Destino* raiz_destinos) {
     printf("Pasajero con documento %d ha sido embarcado en el viaje %d.\n",
            p->num_documento, cod_viaje);
 
-    // Aquí se podría guardar en una lista histórica, pero para este ejercicio
-    // simplemente liberamos el nodo del pasajero (ya no está en cola)
+    // Aqui se podria guardar en una lista historica, pero para este ejercicio
+    // simplemente liberamos el nodo del pasajero (ya no esta en cola)
     free(p);
 }
 
@@ -56,26 +94,24 @@ void realizar_embarque(Destino* raiz_destinos) {
 //  Consulta global de un pasajero por documento
 // -------------------------------------------------------------
 void consultar_pasajero_global(Destino* raiz) {
-    int doc;
-    printf("Ingrese el número de documento: ");
-    scanf("%d", &doc);
+    int doc = leer_entero("Ingrese el numero de documento: ");
 
     Destino* aux = raiz;
     while (aux) {
         Pasajero* p = buscar_pasajero_en_cola(aux->cola, doc);
         if (p) {
-            printf("El pasajero está en el destino '%s' con estado: %s\n",
+            printf("El pasajero esta en el destino '%s' con estado: %s\n",
                    aux->nombre,
                    p->estado == EN_ESPERA ? "En espera" : "Embarcado");
             return;
         }
         aux = aux->siguiente;
     }
-    printf("No se encontró ningún pasajero con ese documento en el sistema.\n");
+    printf("No se encontro ningun pasajero con ese documento en el sistema.\n");
 }
 
 // -------------------------------------------------------------
-//  Estadísticas generales del sistema
+//  Estadisticas generales del sistema
 // -------------------------------------------------------------
 void mostrar_estadisticas(Destino* raiz) {
     int total_dest = 0;
@@ -86,7 +122,7 @@ void mostrar_estadisticas(Destino* raiz) {
     int total_pas_abordados = 0;
 
     if (!raiz) {
-        printf("\n--- Estadísticas ---\n");
+        printf("\n--- Estadisticas ---\n");
         printf("No hay destinos registrados.\n");
         printf("--------------------\n");
         return;
@@ -110,7 +146,7 @@ void mostrar_estadisticas(Destino* raiz) {
     int total_pas_registrados = total_pas_espera + total_pas_abordados;
 
     printf("\n========================================\n");
-    printf("          Reporte Estadístico           \n");
+    printf("          Reporte Estadistico           \n");
     printf("========================================\n");
     printf("1. Promedio de pasajeros en espera por destino: %.2f\n",
            (float)total_pas_espera / total_dest);
@@ -130,43 +166,40 @@ void mostrar_estadisticas(Destino* raiz) {
 }
 
 // -------------------------------------------------------------
-//  Menú principal
+//  Menu principal
 // -------------------------------------------------------------
 int main() {
     Destino* raiz_destinos = NULL;
     int opcion;
 
     do {
-        printf("\n--- Terminal Portuario Turístico ---\n");
+        printf("\n--- Terminal Portuario Turistico ---\n");
         printf("1.  Registrar destino\n");
         printf("2.  Registrar pasajero\n");
         printf("3.  Mostrar pasajeros por destino\n");
         printf("4.  Registrar viaje programado\n");
         printf("5.  Buscar viaje\n");
-        printf("6.  Mostrar árbol de viajes\n");
+        printf("6.  Mostrar arbol de viajes\n");
         printf("7.  Realizar embarque\n");
         printf("8.  Consultar pasajero (global)\n");
-        printf("9.  Estadísticas\n");
+        printf("9.  Estadisticas\n");
         printf("10. Buscar destino\n");
         printf("11. Modificar destino\n");
         printf("0.  Salir\n");
-        printf("Opción: ");
-        scanf("%d", &opcion);
+        opcion = leer_entero("Opcion: ");
 
         switch (opcion) {
             case 1: {
-                int cod;
-                char nom[50], emp[50];
-                printf("Código del destino: ");
-                scanf("%d", &cod);
+                char nom[MAX_NOMBRE], emp[MAX_NOMBRE];
+                int cod = leer_entero("Codigo del destino: ");
                 printf("Nombre del destino: ");
-                scanf(" %[^\n]", nom);
+                leer_linea(nom, sizeof(nom));
                 printf("Empresa que lo gestiona: ");
-                scanf(" %[^\n]", emp);
+                leer_linea(emp, sizeof(emp));
 
-                // Validar que no exista ya un destino con ese código
+                // Validar que no exista ya un destino con ese codigo
                 if (buscar_destino(raiz_destinos, cod) != NULL) {
-                    printf("Ya existe un destino con ese código.\n");
+                    printf("Ya existe un destino con ese codigo.\n");
                 } else {
                     agregar_destino(&raiz_destinos, crear_destino(cod, nom, emp));
                     printf("Destino registrado correctamente.\n");
@@ -175,9 +208,7 @@ int main() {
             }
 
             case 2: {
-                int cod_d, doc, tipo;
-                printf("Código del destino: ");
-                scanf("%d", &cod_d);
+                int cod_d = leer_entero("Codigo del destino: ");
 
                 Destino* d = buscar_destino(raiz_destinos, cod_d);
                 if (!d) {
@@ -185,19 +216,17 @@ int main() {
                     break;
                 }
 
-                printf("Número de documento: ");
-                scanf("%d", &doc);
+                int doc = leer_entero("Numero de documento: ");
 
                 if (pasajero_existe_global(raiz_destinos, doc)) {
-                    printf("Ese pasajero ya está registrado en el sistema.\n");
+                    printf("Ese pasajero ya esta registrado en el sistema.\n");
                     break;
                 }
 
-                printf("Tipo de documento (1: Cédula, 2: Pasaporte, 3: Tarjeta de Identidad): ");
-                scanf("%d", &tipo);
+                int tipo = leer_entero("Tipo de documento (1: Cédula, 2: Pasaporte, 3: Tarjeta de Identidad): ");
 
                 if (tipo < 1 || tipo > 3) {
-                    printf("Tipo de documento no válido.\n");
+                    printf("Tipo de documento no valido.\n");
                     break;
                 }
 
@@ -207,9 +236,7 @@ int main() {
             }
 
             case 3: {
-                int cod;
-                printf("Código del destino: ");
-                scanf("%d", &cod);
+                int cod = leer_entero("Codigo del destino: ");
 
                 Destino* d = buscar_destino(raiz_destinos, cod);
                 if (d) {
@@ -222,9 +249,7 @@ int main() {
             }
 
             case 4: {
-                int cod_d, cod_v, cap;
-                printf("Código del destino: ");
-                scanf("%d", &cod_d);
+                int cod_d = leer_entero("Codigo del destino: ");
 
                 Destino* d = buscar_destino(raiz_destinos, cod_d);
                 if (!d) {
@@ -232,20 +257,21 @@ int main() {
                     break;
                 }
 
-                printf("Código del viaje: ");
-                scanf("%d", &cod_v);
-                printf("Capacidad máxima: ");
-                scanf("%d", &cap);
+                int cod_v = leer_entero("Codigo del viaje: ");
+                int cap = leer_entero("Capacidad maxima: ");
+
+                if (cap <= 0) {
+                    printf("La capacidad maxima debe ser mayor que 0.\n");
+                    break;
+                }
 
                 d->raiz_viajes = insertar_avl(d->raiz_viajes, cod_v, cap);
-                printf("Viaje registrado y árbol balanceado (AVL).\n");
+                printf("Viaje registrado y arbol balanceado (AVL).\n");
                 break;
             }
 
             case 5: {
-                int cod_d, cod_v;
-                printf("Código del destino: ");
-                scanf("%d", &cod_d);
+                int cod_d = leer_entero("Codigo del destino: ");
 
                 Destino* d = buscar_destino(raiz_destinos, cod_d);
                 if (!d) {
@@ -253,8 +279,7 @@ int main() {
                     break;
                 }
 
-                printf("Código del viaje: ");
-                scanf("%d", &cod_v);
+                int cod_v = leer_entero("Codigo del viaje: ");
 
                 NodoAVL* v = buscar_avl(d->raiz_viajes, cod_v);
                 if (v) {
@@ -267,13 +292,11 @@ int main() {
             }
 
             case 6: {
-                int cod;
-                printf("Código del destino: ");
-                scanf("%d", &cod);
+                int cod = leer_entero("Codigo del destino: ");
 
                 Destino* d = buscar_destino(raiz_destinos, cod);
                 if (d) {
-                    printf("Árbol AVL de viajes (vista horizontal):\n");
+                    printf("arbol AVL de viajes (vista horizontal):\n");
                     mostrar_avl(d->raiz_viajes, 0);
                 } else {
                     printf("Destino no existe.\n");
@@ -281,8 +304,8 @@ int main() {
                 break;
             }
 
-            case 7:
-                realizar_embarque(raiz_destinos);
+
+            realizar_embarque(raiz_destinos);
                 break;
 
             case 8:
@@ -294,29 +317,25 @@ int main() {
                 break;
 
             case 10: {
-                int cod;
-                printf("Ingrese el código del destino a buscar: ");
-                scanf("%d", &cod);
+                int cod = leer_entero("Ingrese el codigo del destino a buscar: ");
 
                 Destino* d = buscar_destino(raiz_destinos, cod);
                 if (d) {
                     printf("Destino encontrado:\n");
-                    printf("  Código       : %d\n", d->codigo);
+                    printf("  Codigo       : %d\n", d->codigo);
                     printf("  Nombre       : %s\n", d->nombre);
                     printf("  Empresa      : %s\n", d->empresa);
                     printf("  Pasajeros en espera: %d\n", contar_pasajeros_espera(d->cola));
                 } else {
-                    printf("No hay ningún destino con ese código.\n");
+                    printf("No hay ningun destino con ese codigo.\n");
                 }
                 break;
             }
 
             case 11: {
-                int cod;
-                char nom[50], emp[50];
+                char nom[MAX_NOMBRE], emp[MAX_NOMBRE];
 
-                printf("Ingrese el código del destino a modificar: ");
-                scanf("%d", &cod);
+                int cod = leer_entero("Ingrese el codigo del destino a modificar: ");
 
                 Destino* d = buscar_destino(raiz_destinos, cod);
                 if (!d) {
@@ -324,10 +343,10 @@ int main() {
                     break;
                 }
 
-                printf("Nuevo nombre (deje vacío y presione Enter para no cambiarlo): ");
-                scanf(" %[^\n]", nom);
-                printf("Nueva empresa (deje vacío y presione Enter para no cambiarla): ");
-                scanf(" %[^\n]", emp);
+                printf("Nuevo nombre (deje vacio y presione Enter para no cambiarlo): ");
+                leer_linea(nom, sizeof(nom));
+                printf("Nueva empresa (deje vacio y presione Enter para no cambiarla): ");
+                leer_linea(emp, sizeof(emp));
 
                 modificar_destino(d, nom, emp);
                 printf("Datos del destino actualizados.\n");
@@ -339,7 +358,7 @@ int main() {
                 break;
 
             default:
-                printf("Opción inválida. Intente de nuevo.\n");
+                printf("Opcion invalida. Intente de nuevo.\n");
         }
     } while (opcion != 0);
 

@@ -3,8 +3,9 @@
 #include <string.h>
 #include "destinos.h"
 #include "pasajeros.h"
+#include "avl.h"
 
-// Crea un nuevo destino con su cola y árbol de viajes vacíos
+// Crea un nuevo destino con su cola y arbol de viajes vacios
 Destino* crear_destino(int codigo, char* nombre, char* empresa) {
     Destino* nuevo = (Destino*)malloc(sizeof(Destino));
     nuevo->codigo = codigo;
@@ -30,7 +31,7 @@ void agregar_destino(Destino** raiz, Destino* nuevo) {
     }
 }
 
-// Busca un destino por su código en la lista
+// Busca un destino por su codigo en la lista
 Destino* buscar_destino(Destino* raiz, int codigo) {
     Destino* aux = raiz;
     while (aux) {
@@ -49,13 +50,13 @@ void mostrar_destinos(Destino* raiz) {
         return;
     }
     while (aux) {
-        printf("Código: %d | Nombre: %s | Empresa: %s | Pasajeros en espera: %d\n",
+        printf("Codigo: %d | Nombre: %s | Empresa: %s | Pasajeros en espera: %d\n",
                aux->codigo, aux->nombre, aux->empresa, contar_pasajeros_espera(aux->cola));
         aux = aux->siguiente;
     }
 }
 
-// Verifica si un pasajero ya está registrado en cualquier cola del sistema
+// Verifica si un pasajero ya esta registrado en cualquier cola del sistema
 int pasajero_existe_global(Destino* raiz, int num_doc) {
     Destino* aux = raiz;
     while (aux) {
@@ -78,7 +79,7 @@ void modificar_destino(Destino* destino, char* nuevo_nombre, char* nueva_empresa
     }
 }
 
-// Libera toda la memoria: destinos, colas y árboles AVL
+// Libera toda la memoria: destinos, colas y arboles AVL
 void liberar_destinos(Destino* raiz) {
     Destino* aux;
     while (raiz) {
